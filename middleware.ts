@@ -5,8 +5,17 @@ export async function middleware(req: NextRequest) {
     const token = req.cookies.get('auth_token')?.value;
     const { pathname } = req.nextUrl;
 
-    // Allow login, register page and API auth routes
-    if (pathname === '/login' || pathname === '/register' || pathname.startsWith('/api/auth')) {
+    // Allow login, register page, API auth routes, and PWA assets
+    if (
+        pathname === '/login' ||
+        pathname === '/register' ||
+        pathname.startsWith('/api/auth') ||
+        pathname === '/manifest.json' ||
+        pathname === '/sw.js' ||
+        pathname.endsWith('.png') ||
+        pathname.endsWith('.svg') ||
+        pathname.endsWith('.ico')
+    ) {
         return NextResponse.next();
     }
 
