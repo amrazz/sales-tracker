@@ -9,7 +9,6 @@ export const metadata: Metadata = {
   title: "Van Sales & Inventory Tracker",
   description: "Mobile-first van sales and inventory management",
   manifest: "/manifest.json",
-  themeColor: "#0f172a",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -25,6 +24,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  themeColor: "#0f172a",
 };
 
 export default function RootLayout({
