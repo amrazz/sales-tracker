@@ -1,65 +1,132 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useEffect } from 'react';
+import {
+  TrendingUp,
+  CreditCard,
+  AlertCircle,
+  ArrowRight,
+  Plus,
+  PackageCheck,
+  CheckCircle2,
+  Store,
+  BarChart3,
+  ReceiptText
+} from 'lucide-react';
+import Link from 'next/link';
+import { formatCurrency } from '@/lib/utils';
+
+export default function Dashboard() {
+  const [summary, setSummary] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/summary')
+      .then(res => res.json())
+      .then(d => {
+        setSummary(d);
+        setLoading(false);
+      });
+  }, []);
+
+  const stats = [
+    { label: 'Today Sales', value: summary ? formatCurrency(summary.totalCashSales + summary.totalUPISales + summary.totalCreditSales) : '₹0', icon: TrendingUp, color: 'text-green-600', bg: 'bg-green-50' },
+    { label: 'Pending Credits', value: summary ? formatCurrency(summary.totalCreditSales) : '₹0', icon: CreditCard, color: 'text-orange-600', bg: 'bg-orange-50' },
+    { label: 'Expenses', value: summary ? formatCurrency(summary.totalExpenses) : '₹0', icon: AlertCircle, color: 'text-red-600', bg: 'bg-red-50' },
+  ];
+
+  const quickActions = [
+    { label: 'New Sale', href: '/sales', icon: Plus, bg: 'bg-blue-600', text: 'text-white' },
+    { label: 'Shops', href: '/shops', icon: Store, bg: 'bg-slate-100', text: 'text-slate-800' },
+    { label: 'Log Expense', href: '/expenses', icon: ReceiptText, bg: 'bg-slate-100', text: 'text-slate-800' },
+    { label: 'Stock In', href: '/stock', icon: PackageCheck, bg: 'bg-slate-100', text: 'text-slate-800' },
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="flex flex-col gap-6 p-6 pb-24">
+      <header className="flex flex-col gap-1">
+        <h1 className="text-2xl font-bold">Good Morning!</h1>
+        <p className="text-slate-500 text-sm">{new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+      </header>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 gap-4">
+        {stats.map((stat, i) => (
+          <div key={i} className={`p-4 rounded-2xl ${stat.bg} ${i === 0 ? 'col-span-2' : ''} flex flex-col gap-2`}>
+            <stat.icon className={`w-5 h-5 ${stat.color}`} />
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">{stat.label}</p>
+              <p className={`text-xl font-bold ${stat.color}`}>{loading ? '...' : stat.value}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Quick Actions */}
+      <section className="flex flex-col gap-4">
+        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Quick Actions</h2>
+        <div className="grid grid-cols-2 gap-4">
+          {quickActions.map((action, i) => (
+            <Link
+              key={i}
+              href={action.href}
+              className={`flex items-center justify-center gap-2 p-4 rounded-2xl font-bold shadow-sm active:scale-95 transition-all ${action.bg} ${action.text}`}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              <action.icon className="w-5 h-5" />
+              {action.label}
+            </Link>
+          ))}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </section>
+
+      {/* Advanced Links */}
+      <section className="flex flex-col gap-3">
+        <Link
+          href="/history"
+          className="flex items-center justify-between p-5 bg-purple-50 border border-purple-100 rounded-2xl active:scale-[0.98] transition-all"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white">
+              <ReceiptText className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="font-bold text-purple-900">Sales History</p>
+              <p className="text-xs text-purple-600 font-medium">Search past transactions</p>
+            </div>
+          </div>
+          <ArrowRight className="w-5 h-5 text-purple-400" />
+        </Link>
+
+        <Link
+          href="/analytics"
+          className="flex items-center justify-between p-5 bg-blue-50 border border-blue-100 rounded-2xl active:scale-[0.98] transition-all"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white">
+              <BarChart3 className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="font-bold text-blue-900">Analytics & Reports</p>
+              <p className="text-xs text-blue-600 font-medium">Monthly profit & metrics</p>
+            </div>
+          </div>
+          <ArrowRight className="w-5 h-5 text-blue-400" />
+        </Link>
+
+
+
+        {/* Summary Link */}
+        <Link
+          href="/summary"
+          className="flex items-center justify-between p-4 bg-slate-900 text-white rounded-2xl shadow-lg active:scale-[0.98] transition-all"
+        >
+          <div className="flex flex-col">
+            <span className="text-xs font-medium text-slate-400">End of Day</span>
+            <span className="text-lg font-bold">Daily Closing Summary</span>
+          </div>
+          <ArrowRight className="w-6 h-6" />
+        </Link>
+      </section>
     </div>
   );
 }
