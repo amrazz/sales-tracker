@@ -1,32 +1,26 @@
 {
   "id": "/",
-  "name": "Van Sales & Inventory Tracker",
-  "short_name": "Van Tracker",
-  "description": "Mobile-first van sales and inventory management",
+  "name": "Sales Tracker",
+  "short_name": "STrack",
+  "description": "Mobile-first sales and inventory management",
   "start_url": "/",
   "scope": "/",
-  "display": "standalone",
-  "background_color": "#f8fafc",
-  "theme_color": "#0f172a",
-  "orientation": "portrait",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "/web-app-manifest-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "maskable"
     },
     {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/icon-512-maskable.png",
+      "src": "/web-app-manifest-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "orientation": "portrait"
 }

@@ -6,16 +6,23 @@ import Navigation from "@/components/Navigation";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Van Sales & Inventory Tracker",
-  description: "Mobile-first van sales and inventory management",
+  title: "Sales Tracker",
+  description: "Mobile-first sales and inventory management",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Van Tracker",
+    title: "STrack",
   },
   formatDetection: {
     telephone: false,
+  },
+  icons: {
+    icon: [
+      { url: "/icon1.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon0.svg", type: "image/svg+xml" },
+    ],
+    apple: "/apple-icon.png",
   },
 };
 
