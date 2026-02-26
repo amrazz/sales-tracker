@@ -38,7 +38,7 @@ export default function Dashboard() {
   const quickActions = [
     { label: 'New Sale', href: '/sales', icon: Plus, bg: 'bg-blue-600', text: 'text-white' },
     { label: 'Shops', href: '/shops', icon: Store, bg: 'bg-slate-100', text: 'text-slate-800' },
-    { label: 'Log Expense', href: '/expenses', icon: ReceiptText, bg: 'bg-slate-100', text: 'text-slate-800' },
+    { label: 'Expense', href: '/expenses', icon: ReceiptText, bg: 'bg-slate-100', text: 'text-slate-800' },
     { label: 'Stock In', href: '/stock', icon: PackageCheck, bg: 'bg-slate-100', text: 'text-slate-800' },
   ];
 

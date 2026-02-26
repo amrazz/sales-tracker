@@ -65,7 +65,7 @@ export default function SummaryPage() {
                             <div className="flex flex-col">
                                 {section.items.map((item, i) => (
                                     <div key={i} className={cn(
-                                        "flex justify-between items-center p-5",
+                                        "flex justify-between items-center py-6 px-5",
                                         i !== section.items.length - 1 && "border-b border-slate-100"
                                     )}>
                                         <div className="flex items-center gap-3">

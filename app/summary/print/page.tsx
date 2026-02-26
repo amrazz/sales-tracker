@@ -51,7 +51,7 @@ export default function SettlementPrintPage() {
             </div>
 
             {/* A4 format optimized document */}
-            <div className="w-full max-w-3xl bg-white p-10 sm:p-14 print:p-10 print:shadow-none shadow-xl border border-slate-200 print:border-none rounded-3xl print:rounded-none">
+            <div className="w-full max-w-3xl bg-white p-12 sm:p-20 print:p-12 print:shadow-none shadow-xl border border-slate-200 print:border-none rounded-3xl print:rounded-none">
 
                 {/* Header */}
                 <div className="text-center border-b-2 border-slate-900 pb-8 mb-8">
@@ -74,20 +74,20 @@ export default function SettlementPrintPage() {
                     <table className="w-full text-left text-sm">
                         <tbody className="divide-y divide-slate-100">
                             <tr>
-                                <td className="py-3 font-medium text-slate-600">Today's Cash Sales</td>
-                                <td className="py-3 font-bold text-slate-900 text-right">{formatCurrency(data.totalCashSales)}</td>
+                                <td className="py-4 font-medium text-slate-600">Today's Cash Sales</td>
+                                <td className="py-4 font-bold text-slate-900 text-right">{formatCurrency(data.totalCashSales)}</td>
                             </tr>
                             <tr>
-                                <td className="py-3 font-medium text-slate-600">Old Credit Recovered (Cash)</td>
-                                <td className="py-3 font-bold text-slate-900 text-right">{formatCurrency(data.totalOldCashReceived)}</td>
+                                <td className="py-4 font-medium text-slate-600">Old Credit Recovered (Cash)</td>
+                                <td className="py-4 font-bold text-slate-900 text-right">{formatCurrency(data.totalOldCashReceived)}</td>
                             </tr>
                             <tr>
-                                <td className="py-3 font-medium text-slate-600 text-red-600">Total Expenses (Deducted)</td>
-                                <td className="py-3 font-bold text-red-600 text-right">-{formatCurrency(data.totalExpenses)}</td>
+                                <td className="py-4 font-medium text-slate-600 text-red-600">Total Expenses (Deducted)</td>
+                                <td className="py-4 font-bold text-red-600 text-right">-{formatCurrency(data.totalExpenses)}</td>
                             </tr>
                         </tbody>
                     </table>
-                    <div className="flex justify-between items-center mt-4 p-4 bg-slate-100/50 border border-slate-200 rounded-xl">
+                    <div className="flex justify-between items-center mt-8 p-6 bg-slate-100/50 border border-slate-200 rounded-xl">
                         <span className="font-black text-slate-900 uppercase tracking-tight">Net Profit</span>
                         <span className="font-black text-xl text-slate-900">{formatCurrency(data.totalCashExpected)}</span>
                     </div>
@@ -99,12 +99,12 @@ export default function SettlementPrintPage() {
                     <table className="w-full text-left text-sm">
                         <tbody className="divide-y divide-slate-100">
                             <tr>
-                                <td className="py-3 font-medium text-slate-600">Total UPI Payments Received</td>
-                                <td className="py-3 font-bold text-purple-700 text-right">{formatCurrency(data.totalUPISales)}</td>
+                                <td className="py-4 font-medium text-slate-600">Total UPI Payments Received</td>
+                                <td className="py-4 font-bold text-purple-700 text-right">{formatCurrency(data.totalUPISales)}</td>
                             </tr>
                             <tr>
-                                <td className="py-3 font-medium text-slate-600">New Credit Given Today (Unpaid)</td>
-                                <td className="py-3 font-bold text-orange-600 text-right">{formatCurrency(data.totalCreditSales)}</td>
+                                <td className="py-4 font-medium text-slate-600">New Credit Given Today (Unpaid)</td>
+                                <td className="py-4 font-bold text-orange-600 text-right">{formatCurrency(data.totalCreditSales)}</td>
                             </tr>
                         </tbody>
                     </table>

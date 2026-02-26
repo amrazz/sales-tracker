@@ -56,7 +56,7 @@ export default function InvoicePrintPage() {
             </div>
 
             {/* A5 / Receipt paper format optimized card */}
-            <div className="w-full max-w-2xl bg-white p-8 sm:p-12 print:p-8 sm:print:p-12 print:shadow-none shadow-xl border border-slate-200 print:border-none rounded-3xl print:rounded-none">
+            <div className="w-full max-w-2xl bg-white p-10 sm:p-16 print:p-10 sm:print:p-16 print:shadow-none shadow-xl border border-slate-200 print:border-none rounded-3xl print:rounded-none">
 
                 {/* Header */}
                 <div className="border-b-2 border-slate-900 pb-6 mb-6 flex justify-between items-end">
@@ -107,10 +107,10 @@ export default function InvoicePrintPage() {
                         <tbody className="divide-y divide-slate-100">
                             {sale.items.map((item: any, idx: number) => (
                                 <tr key={idx}>
-                                    <td className="py-3 font-bold text-slate-800 text-sm uppercase">{item.productId?.name || 'Item'}</td>
-                                    <td className="py-3 font-bold text-slate-800 text-sm text-center">{item.quantity}</td>
-                                    <td className="py-3 font-medium text-slate-600 text-sm text-right">{formatCurrency(item.price)}</td>
-                                    <td className="py-3 font-black text-slate-900 text-sm text-right">{formatCurrency(item.quantity * item.price)}</td>
+                                    <td className="py-4 px-1 font-bold text-slate-800 text-sm uppercase">{item.productId?.name || 'Item'}</td>
+                                    <td className="py-4 px-1 font-bold text-slate-800 text-sm text-center">{item.quantity}</td>
+                                    <td className="py-4 px-1 font-medium text-slate-600 text-sm text-right">{formatCurrency(item.price)}</td>
+                                    <td className="py-4 px-1 font-black text-slate-900 text-sm text-right">{formatCurrency(item.quantity * item.price)}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -118,7 +118,7 @@ export default function InvoicePrintPage() {
                 </div>
 
                 {/* Financial Summary */}
-                <div className="flex justify-end mb-10">
+                <div className="flex justify-end mb-16">
                     <div className="w-full max-w-xs">
                         <div className="flex justify-between py-2 border-b border-slate-100 text-sm">
                             <span className="font-bold text-slate-500">Subtotal</span>
