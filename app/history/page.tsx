@@ -80,10 +80,18 @@ export default function HistoryPage() {
                     <button onClick={() => router.back()} className="p-2 -ml-2 hover:bg-slate-100 rounded-full transition-colors active:bg-slate-200">
                         <ChevronLeft className="w-6 h-6" />
                     </button>
-                    <div>
+                    <div className="flex-1">
                         <h1 className="text-xl font-bold leading-tight">Sales History</h1>
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{sales.length} transactions found</p>
                     </div>
+                    {sales.length > 0 && (
+                        <Link
+                            href={`/history/print-summary?start=${filter === 'custom' ? customStart : new Date(sales[sales.length - 1]?.date).toISOString()}&end=${filter === 'custom' ? customEnd : new Date(sales[0]?.date).toISOString()}`}
+                            className="bg-slate-900 text-white p-2 rounded-xl"
+                        >
+                            <Printer className="w-5 h-5" />
+                        </Link>
+                    )}
                 </div>
 
                 {/* Date Filters */}

@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { formatCurrency } from '@/lib/utils';
-import { Printer, ChevronLeft } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
+import PrintActions from '@/components/PrintActions';
 
 export default function SettlementPrintPage() {
     const router = useRouter();
@@ -42,20 +43,15 @@ export default function SettlementPrintPage() {
                 >
                     <ChevronLeft className="w-5 h-5" /> Back
                 </button>
-                <button
-                    onClick={() => window.print()}
-                    className="flex items-center gap-2 bg-slate-900 text-white font-bold px-6 py-2 rounded-xl active:scale-95 transition-all shadow-md"
-                >
-                    <Printer className="w-5 h-5" /> Print Report
-                </button>
+                <PrintActions targetId="print-container" fileName={`Settlement_Report_${new Date().toISOString().split('T')[0]}`} />
             </div>
 
             {/* A4 format optimized document */}
-            <div className="w-full max-w-3xl bg-white p-12 sm:p-20 print:p-12 print:shadow-none shadow-xl border border-slate-200 print:border-none rounded-3xl print:rounded-none">
+            <div id="print-container" className="w-full max-w-3xl bg-white p-6 sm:p-10 print:p-8 print:shadow-none shadow-xl border border-slate-200 print:border-none rounded-3xl print:rounded-none">
 
                 {/* Header */}
-                <div className="text-center border-b-2 border-slate-900 pb-8 mb-8">
-                    <h1 className="text-3xl font-black tracking-tighter uppercase text-slate-900">Daily Settlement Report</h1>
+                <div className="text-center border-b-2 border-slate-900 pb-6 mb-6">
+                    <h1 className="text-xl sm:text-2xl font-black tracking-tighter uppercase text-slate-900">Daily Settlement Report</h1>
                     <div className="mt-4 flex justify-between items-center text-sm font-bold text-slate-600 border border-slate-200 p-4 rounded-lg bg-slate-50">
                         <div>
                             <span className="text-slate-400 uppercase tracking-widest text-[10px] block mb-1">Date</span>

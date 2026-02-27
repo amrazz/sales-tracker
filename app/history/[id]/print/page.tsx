@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { formatCurrency } from '@/lib/utils';
-import { Printer, ChevronLeft } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
+import PrintActions from '@/components/PrintActions';
 
 export default function InvoicePrintPage() {
     const params = useParams();
@@ -47,19 +48,14 @@ export default function InvoicePrintPage() {
                 >
                     <ChevronLeft className="w-5 h-5" /> Back
                 </button>
-                <button
-                    onClick={() => window.print()}
-                    className="flex items-center gap-2 bg-slate-900 text-white font-bold px-6 py-2 rounded-xl active:scale-95 transition-all shadow-md"
-                >
-                    <Printer className="w-5 h-5" /> Print Invoice
-                </button>
+                <PrintActions targetId="print-container" fileName={`Invoice_${sale?.shopId?.name?.replace(/\s+/g, '_') || 'Customer'}_${new Date(sale?.date).getTime()}`} />
             </div>
 
             {/* A5 / Receipt paper format optimized card */}
-            <div className="w-full max-w-2xl bg-white p-10 sm:p-16 print:p-10 sm:print:p-16 print:shadow-none shadow-xl border border-slate-200 print:border-none rounded-3xl print:rounded-none">
+            <div id="print-container" className="w-full max-w-2xl bg-white p-6 sm:p-10 print:p-6 sm:print:p-10 print:shadow-none shadow-xl border border-slate-200 print:border-none rounded-3xl print:rounded-none">
 
                 {/* Header */}
-                <div className="border-b-2 border-slate-900 pb-6 mb-6 flex justify-between items-end">
+                <div className="border-b-2 border-slate-900 pb-4 mb-6 flex justify-between items-end">
                     <div>
                         <h1 className="text-xl font-black tracking-tighter uppercase text-slate-900">Tax Invoice</h1>
                         <p className="text-sm font-bold text-slate-500 uppercase tracking-wide mt-1">Delivery Challan</p>
