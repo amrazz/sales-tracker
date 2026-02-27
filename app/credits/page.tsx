@@ -204,7 +204,12 @@ export default function CreditsPage() {
                                         type="number"
                                         max={selectedShop?.pendingBalance || 0}
                                         value={amount}
-                                        onChange={(e) => setAmount(e.target.value)}
+                                        onChange={(e) => {
+                                            let val = Number(e.target.value);
+                                            const maxAllowed = selectedShop?.pendingBalance || 0;
+                                            if (val > maxAllowed) val = maxAllowed;
+                                            setAmount(e.target.value === '' ? '' : val.toString());
+                                        }}
                                         className="h-16 w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 text-2xl font-black focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-300 transition-all"
                                         placeholder="Enter amount..."
                                     />

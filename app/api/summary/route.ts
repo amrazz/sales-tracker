@@ -2,6 +2,7 @@ import connectToDatabase from '@/lib/mongodb';
 import Sale from '@/models/Sale';
 import Expense from '@/models/Expense';
 import PaymentLog from '@/models/PaymentLog';
+import Shop from '@/models/Shop';
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthSession } from '@/lib/auth';
 
@@ -36,12 +37,16 @@ export async function GET(req: NextRequest) {
     // Cash Expected = Cash sales - Expenses + Old cash received
     const totalCashExpected = totalCashSales - totalExpenses + totalOldCashReceived;
 
+    const allShops = await Shop.find({ ownerId: session.userId });
+    const totalPendingCredits = allShops.reduce((acc, curr) => acc + (curr.pendingBalance || 0), 0);
+
     return NextResponse.json({
         totalCashSales,
         totalUPISales,
         totalCreditSales,
         totalExpenses,
         totalOldCashReceived,
-        totalCashExpected
+        totalCashExpected,
+        totalPendingCredits
     });
 }

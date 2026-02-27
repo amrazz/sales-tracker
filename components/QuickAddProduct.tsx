@@ -147,6 +147,7 @@ export default function QuickAddProduct({ onAdded }: QuickAddProductProps) {
                                     <div className="relative">
                                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">₹</span>
                                         <input
+                                            required
                                             type="number"
                                             className="h-12 w-full bg-slate-100/50 border border-slate-200 rounded-xl pl-7 pr-3 text-slate-900 font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none"
                                             value={price}
@@ -160,6 +161,7 @@ export default function QuickAddProduct({ onAdded }: QuickAddProductProps) {
                                         Initial Stock
                                     </label>
                                     <input
+                                        required
                                         type="number"
                                         placeholder="0"
                                         className="h-12 bg-blue-50/30 border border-blue-100 rounded-xl px-4 text-blue-600 font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none"

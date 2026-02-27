@@ -82,7 +82,7 @@ export default function SettlementPrintPage() {
                                 <td className="py-4 font-bold text-slate-900 text-right">{formatCurrency(data.totalOldCashReceived)}</td>
                             </tr>
                             <tr>
-                                <td className="py-4 font-medium text-slate-600 text-red-600">Total Expenses (Deducted)</td>
+                                <td className="py-4 font-medium text-slate-600">Total Expenses (Deducted)</td>
                                 <td className="py-4 font-bold text-red-600 text-right">-{formatCurrency(data.totalExpenses)}</td>
                             </tr>
                         </tbody>

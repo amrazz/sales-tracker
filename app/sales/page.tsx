@@ -9,6 +9,7 @@ import NotificationDialog from '@/components/NotificationDialog';
 
 export default function SalesPage() {
     const [shops, setShops] = useState<any[]>([]);
+    const [searchShopQuery, setSearchShopQuery] = useState('');
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [step, setStep] = useState(1);
@@ -227,8 +228,22 @@ export default function SalesPage() {
                                 Add Shop
                             </button>
                         </div>
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                            <input
+                                type="text"
+                                placeholder="Search shop by name or area..."
+                                value={searchShopQuery}
+                                onChange={(e) => setSearchShopQuery(e.target.value)}
+                                className="w-full h-12 pl-10 pr-4 bg-white border border-slate-200 rounded-xl text-sm font-bold placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                            />
+                        </div>
                         <div className="grid gap-3">
-                            {shops.map(shop => (
+                            {shops.filter(shop => {
+                                if (!searchShopQuery.trim()) return true;
+                                const query = searchShopQuery.toLowerCase();
+                                return shop.name.toLowerCase().includes(query) || shop.area.toLowerCase().includes(query);
+                            }).map(shop => (
                                 <button
                                     key={shop._id}
                                     onClick={() => { setSelectedShop(shop); setStep(2); }}
@@ -478,8 +493,13 @@ export default function SalesPage() {
                                         type="number"
                                         className="h-16 w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 text-3xl font-black text-slate-900 focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
                                         value={amountPaid}
-                                        onChange={(e) => setAmountPaid(e.target.value)}
+                                        onChange={(e) => {
+                                            let val = Number(e.target.value);
+                                            if (val > finalTotal) val = finalTotal;
+                                            setAmountPaid(e.target.value === '' ? '' : val.toString());
+                                        }}
                                         placeholder={finalTotal.toString()}
+                                        max={finalTotal}
                                     />
                                 </div>
 

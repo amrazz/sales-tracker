@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
+import EnterKeyNavigation from "@/components/EnterKeyNavigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -42,6 +43,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-slate-50 text-slate-900 antialiased print:bg-white`}>
+        <EnterKeyNavigation />
         <main className="max-w-md mx-auto min-h-screen relative shadow-sm bg-white print:max-w-none print:bg-transparent print:shadow-none">
           {children}
         </main>

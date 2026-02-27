@@ -31,7 +31,7 @@ export default function Dashboard() {
 
   const stats = [
     { label: 'Today Sales', value: summary ? formatCurrency(summary.totalCashSales + summary.totalUPISales + summary.totalCreditSales) : '₹0', icon: TrendingUp, color: 'text-green-600', bg: 'bg-green-50' },
-    { label: 'Pending Credits', value: summary ? formatCurrency(summary.totalCreditSales) : '₹0', icon: CreditCard, color: 'text-orange-600', bg: 'bg-orange-50' },
+    { label: 'Pending Credits', value: summary ? formatCurrency(summary.totalPendingCredits) : '₹0', icon: CreditCard, color: 'text-orange-600', bg: 'bg-orange-50' },
     { label: 'Expenses', value: summary ? formatCurrency(summary.totalExpenses) : '₹0', icon: AlertCircle, color: 'text-red-600', bg: 'bg-red-50' },
   ];
 
