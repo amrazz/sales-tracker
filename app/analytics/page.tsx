@@ -65,7 +65,7 @@ export default function AnalyticsPage() {
         } else if (filter === 'week') {
             start.setDate(now.getDate() - 6);
         } else if (filter === 'month') {
-            start.setDate(1); // First of current month
+            start.setDate(now.getDate() - 29); // Last 30 days
         }
 
         fetchAnalytics(start, end);
@@ -75,7 +75,7 @@ export default function AnalyticsPage() {
         if (filter === 'today') return "Today's Metrics";
         if (filter === 'yesterday') return "Yesterday's Metrics";
         if (filter === 'week') return "Last 7 Days";
-        if (filter === 'month') return "This Month";
+        if (filter === 'month') return "Last 30 Days";
         return "Custom Range";
     };
 
@@ -94,7 +94,7 @@ export default function AnalyticsPage() {
                         { id: 'today', label: 'Today' },
                         { id: 'yesterday', label: 'Yesterday' },
                         { id: 'week', label: '7 Days' },
-                        { id: 'month', label: 'Month' },
+                        { id: 'month', label: '30 Days' },
                         { id: 'custom', label: 'Custom' }
                     ].map((btn) => (
                         <button

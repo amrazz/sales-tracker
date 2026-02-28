@@ -54,7 +54,7 @@ export default function HistoryPage() {
         } else if (filter === 'week') {
             start.setDate(now.getDate() - 6);
         } else if (filter === 'month') {
-            start.setDate(1); // First of current month
+            start.setDate(now.getDate() - 29); // Last 30 days
         }
 
         fetchSales(start, end);
@@ -100,7 +100,7 @@ export default function HistoryPage() {
                         { id: 'today', label: 'Today' },
                         { id: 'yesterday', label: 'Yesterday' },
                         { id: 'week', label: '7 Days' },
-                        { id: 'month', label: 'Month' },
+                        { id: 'month', label: '30 Days' },
                         { id: 'custom', label: 'Custom' }
                     ].map((btn) => (
                         <button
