@@ -6,8 +6,7 @@ import { ChevronLeft, Store, MapPin, Trash2, Calendar, IndianRupee, Package, Arr
 import { formatCurrency, cn } from '@/lib/utils';
 import EditShopDialog from '@/components/EditShopDialog';
 import NotificationDialog from '@/components/NotificationDialog';
-import TakeOrderDialog from '@/components/TakeOrderDialog';
-
+    
 export default function ShopProfilePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
     const router = useRouter();
