@@ -110,20 +110,6 @@ export default function ProfilePage() {
                             <p className="text-xs text-slate-500 font-medium">Your data is securely isolated.</p>
                         </div>
                     </div>
-
-                    <button
-                        onClick={handleLogout}
-                        disabled={loading}
-                        className="w-full p-6 flex items-center gap-4 text-red-600 hover:bg-red-50 transition-colors active:bg-red-100 disabled:opacity-50 text-left"
-                    >
-                        <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center shrink-0">
-                            <LogOut className="w-6 h-6" />
-                        </div>
-                        <div className="flex-1">
-                            <p className="font-bold text-lg">Log Out</p>
-                            <p className="text-xs text-red-400 font-medium uppercase tracking-wider">End current session</p>
-                        </div>
-                    </button>
                 </div>
 
                 <div className="text-center mt-4">
