@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Package, ShoppingCart, Wallet, User } from 'lucide-react';
+import { Home, Package, ShoppingCart, Wallet, ClipboardList } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function Navigation() {
@@ -14,8 +14,8 @@ export default function Navigation() {
         { name: 'Home', href: '/', icon: Home },
         { name: 'Stock', href: '/stock', icon: Package },
         { name: 'Sales', href: '/sales', icon: ShoppingCart },
+        { name: 'Orders', href: '/orders', icon: ClipboardList },
         { name: 'Credits', href: '/credits', icon: Wallet },
-        { name: 'Profile', href: '/profile', icon: User },
     ];
 
     return (

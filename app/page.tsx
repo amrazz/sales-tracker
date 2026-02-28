@@ -11,14 +11,21 @@ import {
   CheckCircle2,
   Store,
   BarChart3,
-  ReceiptText
+  ReceiptText,
+  User,
+  LogOut,
+  Settings
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { formatCurrency } from '@/lib/utils';
 
 export default function Dashboard() {
   const [summary, setSummary] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [user, setUser] = useState<{ name: string } | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     fetch('/api/summary')
@@ -27,7 +34,17 @@ export default function Dashboard() {
         setSummary(d);
         setLoading(false);
       });
+
+    fetch('/api/auth/me')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => setUser(data))
+      .catch(() => setUser(null));
   }, []);
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.push('/login');
+  };
 
   const stats = [
     { label: 'Today Sales', value: summary ? formatCurrency(summary.totalCashSales + summary.totalUPISales + summary.totalCreditSales) : '₹0', icon: TrendingUp, color: 'text-green-600', bg: 'bg-green-50' },
@@ -42,12 +59,72 @@ export default function Dashboard() {
     { label: 'Stock In', href: '/stock', icon: PackageCheck, bg: 'bg-slate-100', text: 'text-slate-800' },
   ];
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning!';
+    if (hour < 17) return 'Good Afternoon!';
+    return 'Good Evening!';
+  };
+
   return (
     <div className="flex flex-col gap-6 p-6 pb-24">
-      <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold">Good Morning!</h1>
-        <p className="text-slate-500 text-sm">{new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+      <header className="flex items-start justify-between">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-bold">{getGreeting()}</h1>
+          <p className="text-slate-500 text-sm">{new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+        </div>
+
+        <div className="relative z-50">
+          <button
+            onClick={() => setIsProfileOpen(!isProfileOpen)}
+            className="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden hover:bg-slate-200 transition-colors shadow-sm active:scale-95"
+          >
+            {user?.name ? (
+              <span className="text-lg font-black text-blue-600">
+                {user.name.charAt(0).toUpperCase()}
+              </span>
+            ) : (
+              <User className="w-6 h-6 text-slate-500" />
+            )}
+          </button>
+
+          {isProfileOpen && (
+            <>
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setIsProfileOpen(false)}
+              />
+              <div className="absolute right-0 mt-3 w-56 bg-white rounded-3xl shadow-2xl shadow-slate-200/50 border border-slate-100 py-3 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                <div className="px-5 py-3 border-b border-slate-50 mb-2">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Account</p>
+                  <p className="text-base font-bold text-slate-900 truncate mt-0.5">{user?.name || 'User'}</p>
+                </div>
+
+                <Link
+                  href="/profile"
+                  className="flex items-center gap-3 px-5 py-3 text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                  onClick={() => setIsProfileOpen(false)}
+                >
+                  <Settings className="w-4 h-4 text-slate-400" />
+                  Profile
+                </Link>
+
+                <button
+                  onClick={() => {
+                    setIsProfileOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full flex items-center gap-3 px-5 py-3 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors"
+                >
+                  <LogOut className="w-4 h-4 text-red-400" />
+                  Logout
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </header>
+
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-4">
