@@ -13,6 +13,8 @@ export default function QuickAddProduct({ onAdded }: QuickAddProductProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [name, setName] = useState('');
     const [unit, setUnit] = useState('box');
+    const [customUnit, setCustomUnit] = useState('');
+    const [isCustomUnit, setIsCustomUnit] = useState(false);
     const [price, setPrice] = useState('');
     const [stock, setStock] = useState('');
     const [submitting, setSubmitting] = useState(false);
@@ -27,14 +29,20 @@ export default function QuickAddProduct({ onAdded }: QuickAddProductProps) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!name || !unit) return;
+        const finalUnit = isCustomUnit ? customUnit : unit;
+        if (!name || !finalUnit) return;
 
         setSubmitting(true);
         try {
             const prodRes = await fetch('/api/products', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, unit, price: Number(price) || 0, stock: Number(stock) || 0 }),
+                body: JSON.stringify({
+                    name,
+                    unit: finalUnit,
+                    price: Number(price) || 0,
+                    stock: Number(stock) || 0
+                }),
             });
 
             if (prodRes.status === 409) {
@@ -54,6 +62,8 @@ export default function QuickAddProduct({ onAdded }: QuickAddProductProps) {
 
             setName('');
             setUnit('box');
+            setCustomUnit('');
+            setIsCustomUnit(false);
             setPrice('');
             setStock('');
             setIsOpen(false);
@@ -120,14 +130,17 @@ export default function QuickAddProduct({ onAdded }: QuickAddProductProps) {
                                     Select Unit
                                 </label>
                                 <div className="grid grid-cols-3 gap-2">
-                                    {['box', 'kg', 'ltr'].map((u) => (
+                                    {['box', 'kg', 'ltr', 'pkt', 'pc'].map((u) => (
                                         <button
                                             key={u}
                                             type="button"
-                                            onClick={() => setUnit(u)}
+                                            onClick={() => {
+                                                setUnit(u);
+                                                setIsCustomUnit(false);
+                                            }}
                                             className={cn(
                                                 "h-10 rounded-xl text-xs font-bold border transition-all uppercase",
-                                                unit === u
+                                                !isCustomUnit && unit === u
                                                     ? "bg-blue-600 border-blue-600 text-white shadow-sm"
                                                     : "bg-white border-slate-200 text-slate-500"
                                             )}
@@ -135,7 +148,29 @@ export default function QuickAddProduct({ onAdded }: QuickAddProductProps) {
                                             {u}
                                         </button>
                                     ))}
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsCustomUnit(true)}
+                                        className={cn(
+                                            "h-10 rounded-xl text-xs font-bold border transition-all uppercase",
+                                            isCustomUnit
+                                                ? "bg-blue-600 border-blue-600 text-white shadow-sm"
+                                                : "bg-white border-slate-200 text-slate-500"
+                                        )}
+                                    >
+                                        Other
+                                    </button>
                                 </div>
+                                {isCustomUnit && (
+                                    <input
+                                        required
+                                        type="text"
+                                        placeholder="Enter unit name..."
+                                        className="h-10 mt-1 bg-slate-50 border border-slate-200 rounded-xl px-4 text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none"
+                                        value={customUnit}
+                                        onChange={(e) => setCustomUnit(e.target.value)}
+                                    />
+                                )}
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">

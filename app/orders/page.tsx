@@ -33,12 +33,13 @@ export default function OrdersPage() {
     const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [dateFilter, setDateFilter] = useState('');
+    const [orderToCancel, setOrderToCancel] = useState<string | null>(null);
 
     const [dialog, setDialog] = useState<{
         isOpen: boolean;
         title: string;
         message: string;
-        type: 'success' | 'error';
+        type: 'success' | 'error' | 'warning' | 'confirm';
     }>({ isOpen: false, title: '', message: '', type: 'success' });
 
     useEffect(() => {
@@ -66,11 +67,22 @@ export default function OrdersPage() {
         }
     };
 
-    const handleCancelOrder = async (orderId: string) => {
-        if (!confirm('Are you sure you want to cancel this order?')) return;
+    const handleCancelOrder = (e: React.MouseEvent, orderId: string) => {
+        e.stopPropagation();
+        setOrderToCancel(orderId);
+        setDialog({
+            isOpen: true,
+            title: 'Cancel Order?',
+            message: 'Are you sure you want to cancel this order?',
+            type: 'confirm'
+        });
+    };
+
+    const executeCancelOrder = async () => {
+        if (!orderToCancel) return;
 
         try {
-            const res = await fetch(`/api/orders/${orderId}`, {
+            const res = await fetch(`/api/orders/${orderToCancel}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: 'cancelled' })
@@ -100,6 +112,8 @@ export default function OrdersPage() {
                 message: 'Something went wrong',
                 type: 'error'
             });
+        } finally {
+            setOrderToCancel(null);
         }
     };
 
@@ -265,7 +279,7 @@ export default function OrdersPage() {
                                             Deliver
                                         </button>
                                         <button
-                                            onClick={() => handleCancelOrder(order._id)}
+                                            onClick={(e) => handleCancelOrder(e, order._id)}
                                             className="h-12 w-12 bg-red-50 text-red-500 rounded-xl flex items-center justify-center active:bg-red-100 transition-all font-bold"
                                         >
                                             <X />
@@ -303,7 +317,11 @@ export default function OrdersPage() {
 
             <NotificationDialog
                 {...dialog}
-                onClose={() => setDialog({ ...dialog, isOpen: false })}
+                onClose={() => {
+                    setDialog({ ...dialog, isOpen: false });
+                    setOrderToCancel(null);
+                }}
+                onConfirm={executeCancelOrder}
             />
         </div>
     );

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
 import NotificationDialog from '@/components/NotificationDialog';
+import QuickAddProduct from '@/components/QuickAddProduct';
 
 export default function NewOrderFlow({ onBack, onComplete }: { onBack: () => void, onComplete: () => void }) {
     const [shops, setShops] = useState<any[]>([]);
@@ -41,14 +42,21 @@ export default function NewOrderFlow({ onBack, onComplete }: { onBack: () => voi
         type: 'success'
     });
 
+    const fetchProducts = async () => {
+        const res = await fetch('/api/products');
+        if (res.ok) {
+            setProducts(await res.json());
+        }
+    };
+
     useEffect(() => {
         const fetchData = async () => {
-            const [shopRes, prodRes] = await Promise.all([
-                fetch('/api/shops'),
-                fetch('/api/products')
+            setLoading(true);
+            const [shopRes] = await Promise.all([
+                fetch('/api/shops')
             ]);
             setShops(await shopRes.json());
-            setProducts(await prodRes.json());
+            await fetchProducts();
             setLoading(false);
         };
         fetchData();
@@ -197,7 +205,13 @@ export default function NewOrderFlow({ onBack, onComplete }: { onBack: () => voi
                         </div>
 
                         <div className="bg-white rounded-2xl border border-slate-200 p-4">
-                            <h3 className="text-xs font-bold text-slate-400 uppercase mb-3">Product Catalog</h3>
+                            <div className="flex items-center justify-between mb-3">
+                                <h3 className="text-xs font-bold text-slate-400 uppercase">Product Catalog</h3>
+                                <QuickAddProduct onAdded={async (newProduct) => {
+                                    await fetchProducts();
+                                    addToCart(newProduct);
+                                }} />
+                            </div>
                             <div className="grid grid-cols-2 gap-2">
                                 {products.map(p => (
                                     <button

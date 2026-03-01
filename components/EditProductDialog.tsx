@@ -13,8 +13,12 @@ interface EditProductDialogProps {
 export default function EditProductDialog({ product, onUpdated }: EditProductDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [name, setName] = useState(product.name);
-    const [unit, setUnit] = useState(product.unit || 'box');
+    const standardUnits = ['box', 'kg', 'ltr', 'pkt', 'pc'];
+    const [unit, setUnit] = useState(standardUnits.includes(product.unit) ? product.unit : 'box');
+    const [customUnit, setCustomUnit] = useState(!standardUnits.includes(product.unit) ? product.unit : '');
+    const [isCustomUnit, setIsCustomUnit] = useState(!standardUnits.includes(product.unit));
     const [price, setPrice] = useState(product.price ? product.price.toString() : '');
+    const [stock, setStock] = useState(product.stock ? product.stock.toString() : '0');
     const [submitting, setSubmitting] = useState(false);
 
     // Dialog state
@@ -27,14 +31,20 @@ export default function EditProductDialog({ product, onUpdated }: EditProductDia
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!name || !unit) return;
+        const finalUnit = isCustomUnit ? customUnit : unit;
+        if (!name || !finalUnit) return;
 
         setSubmitting(true);
         try {
             const res = await fetch(`/api/products/${product._id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, unit, price: Number(price) || 0 }),
+                body: JSON.stringify({
+                    name,
+                    unit: finalUnit,
+                    price: Number(price) || 0,
+                    stock: Number(stock) || 0
+                }),
             });
 
             if (!res.ok) throw new Error('Failed to update');
@@ -103,14 +113,17 @@ export default function EditProductDialog({ product, onUpdated }: EditProductDia
                                     Select Unit
                                 </label>
                                 <div className="grid grid-cols-3 gap-2">
-                                    {['box', 'kg', 'ltr'].map((u) => (
+                                    {standardUnits.map((u) => (
                                         <button
                                             key={u}
                                             type="button"
-                                            onClick={() => setUnit(u)}
+                                            onClick={() => {
+                                                setUnit(u);
+                                                setIsCustomUnit(false);
+                                            }}
                                             className={cn(
                                                 "h-10 rounded-xl text-xs font-bold border transition-all uppercase",
-                                                unit === u
+                                                !isCustomUnit && unit === u
                                                     ? "bg-blue-600 border-blue-600 text-white shadow-sm"
                                                     : "bg-white border-slate-200 text-slate-500"
                                             )}
@@ -118,21 +131,57 @@ export default function EditProductDialog({ product, onUpdated }: EditProductDia
                                             {u}
                                         </button>
                                     ))}
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsCustomUnit(true)}
+                                        className={cn(
+                                            "h-10 rounded-xl text-xs font-bold border transition-all uppercase",
+                                            isCustomUnit
+                                                ? "bg-blue-600 border-blue-600 text-white shadow-sm"
+                                                : "bg-white border-slate-200 text-slate-500"
+                                        )}
+                                    >
+                                        Other
+                                    </button>
                                 </div>
+                                {isCustomUnit && (
+                                    <input
+                                        required
+                                        type="text"
+                                        placeholder="Enter unit name..."
+                                        className="h-10 mt-1 bg-slate-50 border border-slate-200 rounded-xl px-4 text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none"
+                                        value={customUnit}
+                                        onChange={(e) => setCustomUnit(e.target.value)}
+                                    />
+                                )}
                             </div>
 
-                            <div className="flex flex-col gap-1.5">
-                                <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider flex items-center gap-2">
-                                    <Tag className="w-3 h-3" />
-                                    Unit Price
-                                </label>
-                                <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">₹</span>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider flex items-center gap-2">
+                                        <Tag className="w-3 h-3" />
+                                        Unit Price
+                                    </label>
+                                    <div className="relative">
+                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">₹</span>
+                                        <input
+                                            type="number"
+                                            className="h-12 w-full bg-slate-100/50 border border-slate-200 rounded-xl pl-7 pr-3 text-slate-900 font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none"
+                                            value={price}
+                                            onChange={(e) => setPrice(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider flex items-center gap-2">
+                                        <Check className="w-3 h-3" />
+                                        Stock Qty
+                                    </label>
                                     <input
                                         type="number"
-                                        className="h-12 w-full bg-slate-100/50 border border-slate-200 rounded-xl pl-7 pr-3 text-slate-900 font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none"
-                                        value={price}
-                                        onChange={(e) => setPrice(e.target.value)}
+                                        className="h-12 w-full bg-blue-50/30 border border-blue-100 rounded-xl px-4 text-blue-600 font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none"
+                                        value={stock}
+                                        onChange={(e) => setStock(e.target.value)}
                                     />
                                 </div>
                             </div>
