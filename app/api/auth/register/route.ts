@@ -18,7 +18,7 @@ async function hashPassword(password: string) {
 export async function POST(req: NextRequest) {
     try {
         await connectToDatabase();
-        const { name, phone, password } = await req.json();
+        const { name, phone, password, companyName } = await req.json();
 
         if (!name || !phone || !password) {
             return NextResponse.json({ success: false, message: 'All fields are required' }, { status: 400 });
@@ -35,7 +35,8 @@ export async function POST(req: NextRequest) {
         const newUser = await User.create({
             name,
             phone,
-            passwordHash
+            passwordHash,
+            companyName
         });
 
         // Automatically log them in after registration
@@ -44,7 +45,8 @@ export async function POST(req: NextRequest) {
             authenticated: true,
             userId: newUser._id.toString(),
             name: newUser.name,
-            phone: newUser.phone
+            phone: newUser.phone,
+            companyName: newUser.companyName
         })
             .setProtectedHeader({ alg: 'HS256' })
             .setExpirationTime('30d')

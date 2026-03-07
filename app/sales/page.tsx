@@ -134,9 +134,12 @@ export default function SalesPage() {
 
     const updateQuantity = (productId: string, delta: number) => {
         const available = getStockForProduct(productId);
+        const step = 1;
+        const change = delta * step;
+
         setCart(cart.map(item => {
             if (item.productId === productId) {
-                const newQty = Math.max(0, item.quantity + delta);
+                const newQty = Math.max(0, Number((item.quantity + change).toFixed(2)));
                 if (newQty > available) {
                     setDialog({
                         isOpen: true,
@@ -150,6 +153,52 @@ export default function SalesPage() {
             }
             return item;
         }).filter(item => item.quantity > 0));
+    };
+
+    const handleManualQuantityChange = (productId: string, value: string) => {
+        if (value === '') {
+            setCart(prevCart => prevCart.map(item =>
+                item.productId === productId ? { ...item, quantity: '' as any } : item
+            ));
+            return;
+        }
+
+        const numValue = parseFloat(value);
+        if (isNaN(numValue)) return;
+
+        setCart(cart.map(item => {
+            if (item.productId === productId) {
+                return { ...item, quantity: numValue };
+            }
+            return item;
+        }));
+    };
+
+    const handleQuantityBlur = (productId: string) => {
+        const available = getStockForProduct(productId);
+        setCart(prevCart => prevCart.map(item => {
+            if (item.productId === productId) {
+                let val = typeof item.quantity === 'string' || isNaN(item.quantity) ? 1 : item.quantity;
+                if (val < 1) val = 1;
+
+                const isFractional = item.unit?.toLowerCase() === 'kg' || item.unit?.toLowerCase() === 'ltr';
+                if (!isFractional) {
+                    val = Math.round(val);
+                }
+
+                if (val > available) {
+                    val = available;
+                    setDialog({
+                        isOpen: true,
+                        title: 'Stock Updated',
+                        message: `Quantity adjusted to maximum available stock: ${available}`,
+                        type: 'warning'
+                    });
+                }
+                return { ...item, quantity: Number(val.toFixed(isFractional ? 2 : 0)) };
+            }
+            return item;
+        }));
     };
 
     const updatePrice = (productId: string, price: number) => {
@@ -301,9 +350,17 @@ export default function SalesPage() {
                                         </button>
                                     </div>
                                     <div className="flex items-center gap-4">
-                                        <div className="flex items-center bg-slate-100 rounded-2xl p-1.5 min-w-[130px] justify-between">
+                                        <div className="flex items-center bg-slate-100 rounded-2xl p-1.5 min-w-[150px] justify-between">
                                             <button onClick={() => updateQuantity(item.productId, -1)} className="w-10 h-10 flex items-center justify-center font-black text-xl hover:bg-white hover:shadow-sm rounded-xl transition-all">-</button>
-                                            <span className="font-black text-lg w-8 text-center">{item.quantity}</span>
+                                            <input
+                                                type="number"
+                                                value={item.quantity}
+                                                onChange={(e) => handleManualQuantityChange(item.productId, e.target.value)}
+                                                onBlur={() => handleQuantityBlur(item.productId)}
+                                                className="font-black text-lg w-16 text-center bg-transparent border-none outline-none focus:ring-1 focus:ring-blue-200 rounded-md"
+                                                step={item.unit?.toLowerCase() === 'kg' || item.unit?.toLowerCase() === 'ltr' ? "0.1" : "1"}
+                                                min="1"
+                                            />
                                             <button onClick={() => updateQuantity(item.productId, 1)} className="w-10 h-10 flex items-center justify-center font-black text-xl hover:bg-white hover:shadow-sm rounded-xl transition-all">+</button>
                                         </div>
                                         <div className="flex-1 text-right">

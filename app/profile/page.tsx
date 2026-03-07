@@ -8,7 +8,7 @@ export default function ProfilePage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
-    const [user, setUser] = useState({ name: '', phone: '' });
+    const [user, setUser] = useState({ name: '', phone: '', companyName: '' });
 
     useEffect(() => {
         fetch('/api/auth/me')
@@ -35,12 +35,23 @@ export default function ProfilePage() {
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         setSaving(true);
-        // Implementing a simple profile update API if needed, but for now we'll just simulate it
-        // and notify the user that profile setup is complete
-        setTimeout(() => {
+        try {
+            const res = await fetch('/api/auth/me', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: user.name, companyName: user.companyName }),
+            });
+            if (res.ok) {
+                alert('Profile updated successfully!');
+            } else {
+                alert('Failed to update profile');
+            }
+        } catch (error) {
+            console.error('Update failed:', error);
+            alert('Something went wrong');
+        } finally {
             setSaving(false);
-            alert('Profile updated successfully!');
-        }, 1000);
+        }
     };
 
     return (
@@ -72,6 +83,20 @@ export default function ProfilePage() {
                                 className="w-full h-14 bg-slate-50 border-2 border-slate-100 rounded-2xl pl-12 pr-4 font-bold text-slate-900 focus:border-blue-500 focus:bg-white outline-none transition-all"
                                 placeholder="Business Owner Name"
                                 required
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Company Name</label>
+                        <div className="relative">
+                            <Fingerprint className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                            <input
+                                type="text"
+                                value={user.companyName || ''}
+                                onChange={(e) => setUser({ ...user, companyName: e.target.value })}
+                                className="w-full h-14 bg-slate-50 border-2 border-slate-100 rounded-2xl pl-12 pr-4 font-bold text-slate-900 focus:border-blue-500 focus:bg-white outline-none transition-all"
+                                placeholder="Company Name (displayed on bills)"
                             />
                         </div>
                     </div>

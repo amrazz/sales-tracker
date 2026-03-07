@@ -8,6 +8,7 @@ import Link from 'next/link';
 export default function RegisterPage() {
     const router = useRouter();
     const [name, setName] = useState('');
+    const [companyName, setCompanyName] = useState('');
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -22,7 +23,7 @@ export default function RegisterPage() {
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, phone, password }),
+                body: JSON.stringify({ name, phone, password, companyName }),
             });
 
             const data = await res.json();
@@ -67,6 +68,20 @@ export default function RegisterPage() {
                                 className="w-full h-14 bg-slate-50 pl-12 pr-4 rounded-xl border border-slate-200 font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all placeholder:text-slate-400 placeholder:font-medium"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Company Name</label>
+                        <div className="relative">
+                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                            <input
+                                type="text"
+                                placeholder="Display name on bills"
+                                className="w-full h-14 bg-slate-50 pl-12 pr-4 rounded-xl border border-slate-200 font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all placeholder:text-slate-400 placeholder:font-medium"
+                                value={companyName}
+                                onChange={(e) => setCompanyName(e.target.value)}
                             />
                         </div>
                     </div>

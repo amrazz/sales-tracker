@@ -82,13 +82,51 @@ export default function NewOrderFlow({ onBack, onComplete }: { onBack: () => voi
     };
 
     const updateQuantity = (productId: string, delta: number) => {
-        setCart(cart.map(item => {
+        setCart(prevCart => prevCart.map(item => {
             if (item.productId === productId) {
-                const newQty = Math.max(0, item.quantity + delta);
+                const step = 1;
+                const change = delta * step;
+                const newQty = Math.max(0, Number((item.quantity + change).toFixed(2)));
                 return { ...item, quantity: newQty };
             }
             return item;
         }).filter(item => item.quantity > 0));
+    };
+
+    const handleManualQuantityChange = (productId: string, value: string) => {
+        if (value === '') {
+            setCart(prevCart => prevCart.map(item =>
+                item.productId === productId ? { ...item, quantity: '' as any } : item
+            ));
+            return;
+        }
+
+        const numValue = parseFloat(value);
+        if (isNaN(numValue)) return;
+
+        setCart(prevCart => prevCart.map(item => {
+            if (item.productId === productId) {
+                return { ...item, quantity: numValue };
+            }
+            return item;
+        }));
+    };
+
+    const handleQuantityBlur = (productId: string) => {
+        setCart(prevCart => prevCart.map(item => {
+            if (item.productId === productId) {
+                let val = typeof item.quantity === 'string' || isNaN(item.quantity) ? 1 : item.quantity;
+                if (val < 1) val = 1;
+
+                const isFractional = item.unit?.toLowerCase() === 'kg' || item.unit?.toLowerCase() === 'ltr';
+                if (!isFractional) {
+                    val = Math.round(val);
+                }
+
+                return { ...item, quantity: Number(val.toFixed(isFractional ? 2 : 0)) };
+            }
+            return item;
+        }));
     };
 
     const totalSubtotal = cart.reduce((acc, curr) => acc + (curr.quantity * curr.price), 0);
@@ -196,9 +234,27 @@ export default function NewOrderFlow({ onBack, onComplete }: { onBack: () => voi
                                         <p className="text-xs text-slate-400">{formatCurrency(item.price)} per {item.unit || 'unit'}</p>
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <button onClick={() => updateQuantity(item.productId, -1)} className="w-8 h-8 flex items-center justify-center bg-slate-100 rounded-lg">-</button>
-                                        <span className="font-bold w-4 text-center">{item.quantity}</span>
-                                        <button onClick={() => updateQuantity(item.productId, 1)} className="w-8 h-8 flex items-center justify-center bg-slate-100 rounded-lg">+</button>
+                                        <button
+                                            onClick={() => updateQuantity(item.productId, -1)}
+                                            className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-xl active:bg-slate-200 transition-colors select-none"
+                                        >
+                                            <Minus className="w-4 h-4" />
+                                        </button>
+                                        <input
+                                            type="number"
+                                            value={item.quantity}
+                                            onChange={(e) => handleManualQuantityChange(item.productId, e.target.value)}
+                                            onBlur={() => handleQuantityBlur(item.productId)}
+                                            className="font-bold w-16 text-center text-lg bg-transparent border-none outline-none focus:ring-1 focus:ring-blue-200 rounded-md"
+                                            step={item.unit?.toLowerCase() === 'kg' || item.unit?.toLowerCase() === 'ltr' ? "0.1" : "1"}
+                                            min="1"
+                                        />
+                                        <button
+                                            onClick={() => updateQuantity(item.productId, 1)}
+                                            className="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-xl active:bg-slate-200 transition-colors select-none"
+                                        >
+                                            <Plus className="w-4 h-4" />
+                                        </button>
                                     </div>
                                 </div>
                             ))}

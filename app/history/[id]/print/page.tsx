@@ -10,7 +10,14 @@ export default function InvoicePrintPage() {
     const params = useParams();
     const router = useRouter();
     const [sale, setSale] = useState<any>(null);
+    const [currentUser, setCurrentUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetch('/api/auth/me')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => setCurrentUser(data));
+    }, []);
 
     useEffect(() => {
         if (!params.id) return;
@@ -58,11 +65,9 @@ export default function InvoicePrintPage() {
                 <div className="border-b-2 border-slate-900 pb-4 mb-6 flex justify-between items-end">
                     <div>
                         <h1 className="text-xl font-black tracking-tighter uppercase text-slate-900">Tax Invoice</h1>
-                        <p className="text-sm font-bold text-slate-500 uppercase tracking-wide mt-1">Delivery Challan</p>
                     </div>
                     <div className="text-right">
-                        <p className="font-bold text-slate-800 text-lg">Van Sales Tracker</p>
-                        <p className="text-xs text-slate-500 font-medium">Auto-generated receipt</p>
+                        <p className="font-bold text-slate-800 text-lg">{currentUser?.companyName || 'Van Sales Tracker'}</p>
                     </div>
                 </div>
 
@@ -146,7 +151,6 @@ export default function InvoicePrintPage() {
                 {/* Footer Notes */}
                 <div className="text-center pt-8 border-t border-slate-200">
                     <p className="font-bold text-slate-800 uppercase tracking-widest text-xs mb-1">Thank you for your business!</p>
-                    <p className="text-[10px] text-slate-400 uppercase tracking-widest">This is a system generated invoice.</p>
                 </div>
 
             </div>

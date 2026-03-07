@@ -17,6 +17,7 @@ export async function getAuthSession() {
             userId: payload.userId as string,
             name: payload.name as string,
             phone: payload.phone as string,
+            companyName: payload.companyName as string,
         };
     } catch (error) {
         return null;
