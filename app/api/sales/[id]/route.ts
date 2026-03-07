@@ -21,8 +21,8 @@ export async function GET(
         }
 
         const sale = await Sale.findOne({ _id: id, ownerId: session.userId })
-            .populate('shopId')
-            .populate('items.productId');
+            .populate('shopId', 'name area phone')
+            .populate('items.productId', 'name unit price');
 
         if (!sale) {
             return NextResponse.json({ error: 'Sale not found' }, { status: 404 });

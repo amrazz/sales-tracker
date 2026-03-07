@@ -67,9 +67,11 @@ export async function GET(req: NextRequest) {
     }
 
     const sales = await Sale.find(query)
-        .populate('shopId')
-        .populate('items.productId')
-        .sort({ date: -1 });
+        .select('shopId items subtotal discount totalAmount amountPaid paymentType date')
+        .populate('shopId', 'name area phone')
+        .populate('items.productId', 'name unit')
+        .sort({ date: -1 })
+        .limit(50); // Initial limit to prevent massive data loads
 
     return NextResponse.json(sales);
 }

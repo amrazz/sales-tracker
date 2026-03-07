@@ -1,39 +1,30 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import useSWR from 'swr';
 import { useParams, useRouter } from 'next/navigation';
 import { formatCurrency } from '@/lib/utils';
 import { ChevronLeft } from 'lucide-react';
 import PrintActions from '@/components/PrintActions';
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export default function InvoicePrintPage() {
     const params = useParams();
     const router = useRouter();
-    const [sale, setSale] = useState<any>(null);
-    const [currentUser, setCurrentUser] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetch('/api/auth/me')
-            .then(res => res.ok ? res.json() : null)
-            .then(data => setCurrentUser(data));
-    }, []);
+    const { data: currentUser } = useSWR('/api/auth/me', fetcher);
 
-    useEffect(() => {
-        if (!params.id) return;
-        fetch(`/api/sales/${params.id}`)
-            .then(res => res.json())
-            .then(data => {
-                setSale(data);
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error(err);
-                setLoading(false);
-            });
-    }, [params.id]);
+    const { data: sale, error, isLoading } = useSWR(
+        params.id ? `/api/sales/${params.id}` : null,
+        fetcher,
+        {
+            revalidateOnFocus: false,
+            dedupingInterval: 10000,
+        }
+    );
 
-    if (loading) {
+    if (isLoading) {
         return <div className="p-10 text-center font-bold text-slate-500">Loading Invoice...</div>;
     }
 

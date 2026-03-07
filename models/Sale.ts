@@ -34,6 +34,10 @@ const SaleSchema: Schema = new Schema({
     date: { type: Date, default: Date.now },
 }, { timestamps: true });
 
+// Performance Indexes
+SaleSchema.index({ ownerId: 1, date: -1 });
+SaleSchema.index({ ownerId: 1, shopId: 1, date: -1 });
+
 // Force model re-registration to pick up schema changes in development
 if (mongoose.models && mongoose.models.Sale) {
     delete (mongoose.models as any).Sale;

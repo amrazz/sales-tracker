@@ -1,17 +1,18 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
+import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, Search, ReceiptText, Package, CalendarOff, CalendarDays, Wallet, CreditCard, Printer } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 type DateFilter = 'today' | 'yesterday' | 'week' | 'month' | 'custom';
 
 export default function HistoryPage() {
     const router = useRouter();
-    const [sales, setSales] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
 
     // Date Filtering State
@@ -19,34 +20,19 @@ export default function HistoryPage() {
     const [customStart, setCustomStart] = useState('');
     const [customEnd, setCustomEnd] = useState('');
 
-    const fetchSales = async (startDate: Date, endDate: Date) => {
-        setLoading(true);
-        try {
-            const startIso = startDate.toISOString();
-            const endIso = endDate.toISOString();
-            const res = await fetch(`/api/sales?startDate=${startIso}&endDate=${endIso}`);
-            const data = await res.json();
-            setSales(data);
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        if (filter === 'custom') {
-            if (customStart && customEnd) {
-                fetchSales(new Date(customStart), new Date(customEnd));
-            }
-            return;
-        }
-
+    const queryParams = useMemo(() => {
         const now = new Date();
         let start = new Date();
         let end = new Date();
 
-        if (filter === 'today') {
+        if (filter === 'custom') {
+            if (customStart && customEnd) {
+                start = new Date(customStart);
+                end = new Date(customEnd);
+            } else {
+                return null;
+            }
+        } else if (filter === 'today') {
             // keep as today
         } else if (filter === 'yesterday') {
             start.setDate(now.getDate() - 1);
@@ -57,13 +43,22 @@ export default function HistoryPage() {
             start.setDate(now.getDate() - 29); // Last 30 days
         }
 
-        fetchSales(start, end);
+        return `startDate=${start.toISOString()}&endDate=${end.toISOString()}`;
     }, [filter, customStart, customEnd]);
+
+    const { data: sales = [], error, isLoading, isValidating } = useSWR(
+        queryParams ? `/api/sales?${queryParams}` : null,
+        fetcher,
+        {
+            revalidateOnFocus: false,
+            dedupingInterval: 5000,
+        }
+    );
 
     const filteredSales = useMemo(() => {
         if (!searchQuery.trim()) return sales;
         const lowerQuery = searchQuery.toLowerCase();
-        return sales.filter((s: any) =>
+        return (sales as any[]).filter((s: any) =>
             s.shopId?.name?.toLowerCase().includes(lowerQuery) ||
             s.shopId?.area?.toLowerCase().includes(lowerQuery)
         );
@@ -151,7 +146,7 @@ export default function HistoryPage() {
             </header>
 
             <div className="flex-1 p-4 pb-24">
-                {loading ? (
+                {(isLoading && sales.length === 0) ? (
                     <div className="flex flex-col items-center justify-center py-20 opacity-50">
                         <ReceiptText className="w-10 h-10 text-slate-400 mb-4 animate-pulse" />
                         <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Loading history...</p>
@@ -164,7 +159,7 @@ export default function HistoryPage() {
                     </div>
                 ) : (
                     <div className="flex flex-col gap-4">
-                        {filteredSales.map((sale) => (
+                        {filteredSales.map((sale: any) => (
                             <div key={sale._id} className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
                                 {/* Card Header */}
                                 <div className="p-4 bg-slate-50 border-b border-slate-100 flex justify-between items-start">
